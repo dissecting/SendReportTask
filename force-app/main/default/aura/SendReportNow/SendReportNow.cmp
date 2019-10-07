@@ -1,6 +1,4 @@
 <aura:component extensible = "true" controller = "ReportSenderController" implements = "flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction" access = "global">
-    <aura:attribute name = "stateStatus" type = "String"/>
     <aura:attribute name = "errorMsg" type = "String"/>
-    <lightning:notificationsLibrary aura:id = "notifLib"/>
     {!v.body}
 </aura:component>

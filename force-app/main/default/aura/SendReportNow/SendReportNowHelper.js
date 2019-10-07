@@ -6,12 +6,7 @@
         });
 
         action.setCallback(this, function(response) {
-            var state = response.getState();
-            component.set("v.stateStatus", state);
-            if (state === "ERROR") {
-                var errors = response.getError();
-                component.set("v.errorMsg", errors[0].message);
-            }
+            this.handleSetState(component, response);
         });
         $A.enqueueAction(action);
     }
