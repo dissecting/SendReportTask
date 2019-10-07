@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>ReportSenderController</members>
+		<members>ReportSenderSch</members>
+		<members>ReportSenderSchController</members>
+		<members>ReportSenderSchRemoverController</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>SendReportBySchedulablePage</members>
+		<members>SendReportNowPage</members>
+		<members>SendReportRemoveSchedulablePage</members>
+		<name>ApexPage</name>
+	</types>
+	<types>
+		<members>SendReportApp</members>
+		<members>SendReportBySchedulable</members>
+		<members>SendReportNow</members>
+		<members>SendReportNowChild</members>
+		<members>SendReportRemoveSchedulable</members>
+		<name>AuraDefinitionBundle</name>
+	</types>
+	<types>
+		<members>*</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<version>46.0</version>
+</Package>

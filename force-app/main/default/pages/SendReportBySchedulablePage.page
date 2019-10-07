@@ -1,0 +1,14 @@
+<apex:page standardController="ReportSender__c">
+    <apex:includeLightning />
+    <div id = "lightning" />
+    <script>
+        var idRecord = '{!$CurrentPage.parameters.Id}';
+        $Lightning.use("c:SendReportApp", function() {
+            $Lightning.createComponent(
+                "c:SendReportBySchedulable",
+                { isVF: true, recordId: idRecord },
+                "lightning"
+          );
+        });
+    </script>
+</apex:page>
