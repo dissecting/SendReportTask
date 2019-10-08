@@ -2,10 +2,12 @@
     handleInit : function(component, recordId) {
         var action = component.get("c.checkSchedulableStatus");
         var isVF = component.get("v.isVF");
-        this.handleStartLoading(component);
         action.setParams({
             recordId: recordId
         });
+        if (!isVF) {
+            this.handleStartLoading(component);
+        }
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
@@ -18,14 +20,14 @@
                         "header": "Error!",
                         "message": errors[0].message
                     });
+                    this.handleStopLoading(component);
+                    var dismissActionPanel = $A.get("e.force:closeQuickAction");
+                    dismissActionPanel.fire();
                 } else {
                     component.set("v.isConfirm", false);
                     component.set("v.isError", true);
                     component.set("v.msg", errors[0].message);
                 }
-                var dismissActionPanel = $A.get("e.force:closeQuickAction");
-                dismissActionPanel.fire();
-                handleStopLoading(component);
                 console.error(errors);
             }
         });
@@ -67,9 +69,11 @@
                 }
                 console.error(errors);
             }
-            this.handleStopLoading(component);
-            var dismissActionPanel = $A.get("e.force:closeQuickAction");
-            dismissActionPanel.fire();
+            if (!isVF) {
+                this.handleStopLoading(component);
+                var dismissActionPanel = $A.get("e.force:closeQuickAction");
+                dismissActionPanel.fire();
+            }
         });
         $A.enqueueAction(action);
     }
