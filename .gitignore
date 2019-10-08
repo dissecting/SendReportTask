@@ -44,3 +44,12 @@ lwc
 .vim-force.com/
 force-app/main/default/classes/PrepareReport.cls
 force-app/main/default/classes/PrepareReport.cls-meta.xml
+force-app/main/default/aura/SendReportNow/SendReportNow.auradoc
+force-app/main/default/aura/SendReportNow/SendReportNow.cmp
+force-app/main/default/aura/SendReportNow/SendReportNow.cmp-meta.xml
+force-app/main/default/aura/SendReportNow/SendReportNow.css
+force-app/main/default/aura/SendReportNow/SendReportNow.design
+force-app/main/default/aura/SendReportNow/SendReportNow.svg
+force-app/main/default/aura/SendReportNow/SendReportNowController.js
+force-app/main/default/aura/SendReportNow/SendReportNowHelper.js
+force-app/main/default/aura/SendReportNow/SendReportNowRenderer.js
