@@ -128,7 +128,9 @@ public class ReportSenderController {
         for (Integer i = 0; i < factDetails.getRows().size(); i++) {
             Reports.ReportDetailRow reportDetailRow = factDetails.getRows()[i];
             Reports.SummaryValue summaryValue = factDetails.getAggregates()[0];
-            summaryValueList.add(summaryValue.getLabel());
+            if (i == 0) {
+                summaryValueList.add(summaryValue.getLabel());
+            }
 
             for (Integer j = 0; j < reportDetailRow.getDataCells().size(); j++) {
                 detailColumnValueList.add(reportDetailRow.getDataCells()[j].getLabel());
