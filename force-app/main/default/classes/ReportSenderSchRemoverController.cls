@@ -1,4 +1,4 @@
-public with sharing class ReportSenderSchRemoverController {
+public class ReportSenderSchRemoverController {
 
     @AuraEnabled
     public static void removeSchedulable(Id recordId) {
@@ -9,8 +9,7 @@ public with sharing class ReportSenderSchRemoverController {
             WHERE Id = :recordId
         ];
 
-        List<CronTrigger> jobList = new List<CronTrigger>();
-        jobList = [
+        List<CronTrigger> jobList = [
             SELECT Id, CronJobDetail.Name
             FROM CronTrigger
             WHERE CronJobDetail.Name = :reportSender[0].Name
@@ -48,8 +47,12 @@ public with sharing class ReportSenderSchRemoverController {
             WHERE Id = :recordId
         ];
 
-        Boolean isNotCron = !reportSender[0].IsCron__c;
+        Boolean isCron = reportSender[0].IsCron__c;
 
-        return isNotCron;
+        if (!isCron) {
+            throw new AuraHandledException('Schedulable job does not exist!');
+        }
+
+        return isCron;
     }
 }

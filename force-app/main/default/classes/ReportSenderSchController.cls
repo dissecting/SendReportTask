@@ -1,4 +1,4 @@
-public with sharing class ReportSenderSchController {
+public class ReportSenderSchController {
 
     @AuraEnabled
     public static void setSchedulable(Id recordId) {
@@ -12,12 +12,9 @@ public with sharing class ReportSenderSchController {
         String cronValue = reportSender[0].Cron__c;
         String reportName = reportSender[0].Name;
 
-        System.schedule(reportName, cronValue, new ReportSenderSch(recordId));
-
         try {
+            System.schedule(reportName, cronValue, new ReportSenderSch(recordId));
             setSchedulableStatus(reportSender);
-        } catch (DMLException e){
-            throw new AuraHandledException(e.getDMLMessage(0));
         } catch (Exception e){
             throw new AuraHandledException(e.getMessage());
         }
@@ -43,6 +40,10 @@ public with sharing class ReportSenderSchController {
         ];
 
         Boolean isCron = reportSender[0].IsCron__c;
+
+        if (isCron) {
+            throw new AuraHandledException('Schedulable job already exists!');
+        }
 
         return isCron;
     }

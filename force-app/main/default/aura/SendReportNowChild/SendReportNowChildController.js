@@ -1,6 +1,6 @@
 ({
-    onSend: function(component, event, helper) {
+    doInit: function(component, event, helper) {
         var recordId = component.get("v.recordId");
-        helper.handleSend(component, recordId);
+        helper.handleInit(component, recordId);
     }
 })

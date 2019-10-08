@@ -1,0 +1,3 @@
+<aura:component extensible="true" implements="flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction" access="global">
+    {!v.body}
+</aura:component>

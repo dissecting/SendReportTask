@@ -2,13 +2,14 @@
     handleInit : function(component, recordId) {
         var action = component.get("c.checkSchedulableStatus");
         var isVF = component.get("v.isVF");
+        this.handleStartLoading(component);
         action.setParams({
             recordId: recordId
         });
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
-                component.set("v.isCron", response.getReturnValue());
+                this.handleAction(component, recordId);
             } else if (state === "ERROR") {
                 var errors = response.getError();
                 if (!isVF) {
@@ -22,13 +23,16 @@
                     component.set("v.isError", true);
                     component.set("v.msg", errors[0].message);
                 }
+                var dismissActionPanel = $A.get("e.force:closeQuickAction");
+                dismissActionPanel.fire();
+                handleStopLoading(component);
                 console.error(errors);
             }
         });
         $A.enqueueAction(action);
     },
 
-    handleSend: function(component, recordId) {
+    handleAction: function(component, recordId) {
         var action = component.get("c.setSchedulable");
         var isVF = component.get("v.isVF");
         action.setParams({
@@ -48,7 +52,6 @@
                     component.set("v.isError", false);
                     component.set("v.msg", "Successfully Scheduled Email!");
                 }
-                component.set("v.isCron", true);
             } else if (state === "ERROR") {
                 var errors = response.getError();
                 if (!isVF) {
@@ -64,6 +67,9 @@
                 }
                 console.error(errors);
             }
+            this.handleStopLoading(component);
+            var dismissActionPanel = $A.get("e.force:closeQuickAction");
+            dismissActionPanel.fire();
         });
         $A.enqueueAction(action);
     }

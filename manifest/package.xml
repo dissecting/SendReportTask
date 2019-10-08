@@ -2,9 +2,12 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
 		<members>ReportSenderController</members>
+		<members>ReportSenderControllerTest</members>
 		<members>ReportSenderSch</members>
 		<members>ReportSenderSchController</members>
+		<members>ReportSenderSchControllerTest</members>
 		<members>ReportSenderSchRemoverController</members>
+		<members>ReportSenderSchRemoverControllerTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -16,14 +19,24 @@
 	<types>
 		<members>SendReportApp</members>
 		<members>SendReportBySchedulable</members>
-		<members>SendReportNow</members>
+		<members>SendReportCmp</members>
 		<members>SendReportNowChild</members>
 		<members>SendReportRemoveSchedulable</members>
 		<name>AuraDefinitionBundle</name>
 	</types>
 	<types>
-		<members>*</members>
-		<name>LightningComponentBundle</name>
+		<members>ReportSender__c</members>
+		<name>CustomObject</name>
+	</types>
+	<types>
+		<members>ReportSender__c</members>
+		<name>CustomTab</name>
+	</types>
+	<types>
+		<members>RemoveSchedulable</members>
+		<members>SendReportBySchedulable</members>
+		<members>SendReportNow</members>
+		<name>QuickAction</name>
 	</types>
 	<version>46.0</version>
 </Package>

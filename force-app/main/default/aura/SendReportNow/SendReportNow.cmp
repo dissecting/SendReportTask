@@ -1,3 +1,0 @@
-<aura:component extensible = "true" controller = "ReportSenderController" implements = "flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction" access = "global">
-    {!v.body}
-</aura:component>

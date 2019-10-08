@@ -1,6 +1,7 @@
 ({
     handleInit : function(component, recordId) {
         var action = component.get("c.checkCronStatus");
+        this.handleStartLoading(component);
         var isVF = component.get("v.isVF");
         action.setParams({
             recordId: recordId
@@ -8,7 +9,7 @@
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
-                component.set("v.isNotCron", response.getReturnValue());
+                this.handleAction(component, recordId);
             } else if (state === "ERROR") {
                 var errors = response.getError();
                 if (!isVF) {
@@ -22,13 +23,16 @@
                     component.set("v.isError", true);
                     component.set("v.msg", errors[0].message);
                 }
+                var dismissActionPanel = $A.get("e.force:closeQuickAction");
+                dismissActionPanel.fire();
                 console.error(errors);
+                this.handleStopLoading(component);
             }
         });
         $A.enqueueAction(action);
     },
 
-    handleRemove: function(component, recordId) {
+    handleAction: function(component, recordId) {
         var action = component.get("c.removeSchedulable");
         var isVF = component.get("v.isVF");
         action.setParams({
@@ -48,7 +52,6 @@
                     component.set("v.isError", false);
                     component.set("v.msg", "Schedulable was successfully removed!");
                 }
-                component.set("v.isNotCron", true);
             } else if (state === "ERROR") {
                 var errors = response.getError();
                 if (!isVF) {
@@ -64,6 +67,9 @@
                 }
                 console.error(errors);
             }
+            this.handleStopLoading(component);
+            var dismissActionPanel = $A.get("e.force:closeQuickAction");
+            dismissActionPanel.fire();
         });
         $A.enqueueAction(action);
     }

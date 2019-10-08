@@ -1,4 +1,4 @@
-public with sharing class ReportSenderController {
+public class ReportSenderController {
 
     @AuraEnabled
     public static void getReport(Id recordId) {

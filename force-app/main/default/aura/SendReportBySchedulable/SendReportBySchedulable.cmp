@@ -1,31 +1,24 @@
-<aura:component controller = "ReportSenderSchController" implements = "flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction" access = "global">
-    <aura:attribute name = "isVF" type = "Boolean" default = "false"/>
-    <aura:attribute name = "recordId" type = "Id" default = "{!v.recordId}"/>
-    <aura:attribute name = "isCron" type = "Boolean"/>
-    <aura:attribute name = "msg" type = "String"/>
-    <aura:attribute name = "isError" type = "Boolean" default = "false"/>
-    <aura:attribute name = "isConfirm" type = "Boolean" default = "false"/>
-    <aura:handler name = "init" value = "{!this}" action = "{!c.doInit}"/>
-    <lightning:notificationsLibrary aura:id = "notifLib"/>
-    <aura:if isTrue = "{!v.isVF}">
-        <div class = "slds-col slds-small-size_12-of-12 slds-medium-size_6-of-12 slds-large-size_4-of-12 slds-align_absolute-center">
-            <aura:if isTrue = "{!v.isError}">
-                <ui:message title = "Error" severity = "error" closable = "true">
+<aura:component controller= "ReportSenderSchController" implements="flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction" extends="c:SendReportCmp" access="global">
+    <aura:attribute name="isVF" type="Boolean" default="false"/>
+    <aura:attribute name="recordId" type="Id" default="{!v.recordId}"/>
+    <aura:attribute name="msg" type="String"/>
+    <aura:attribute name="isError" type="Boolean" default="false"/>
+    <aura:attribute name="isConfirm" type="Boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+    <lightning:spinner aura:id="mySpinner" class="slds-hide"/>
+    <aura:if isTrue="{!v.isVF}">
+        <div class="slds-col slds-small-size_12-of-12 slds-medium-size_6-of-12 slds-large-size_4-of-12 slds-align_absolute-center">
+            <aura:if isTrue="{!v.isError}">
+                <ui:message title="Error" severity="error" closable="true">
                     {!v.msg}
                 </ui:message>
             </aura:if>
-            <aura:if isTrue = "{!v.isConfirm}">
-                <ui:message title = "Confirmation" severity = "confirm" closable = "true">
+            <aura:if isTrue="{!v.isConfirm}">
+                <ui:message title="Confirmation" severity="confirm" closable="true">
                     {!v.msg}
                 </ui:message>
             </aura:if>
         </div>
     </aura:if>
-    <lightning:button name = "send"
-                    label = "Send by Schedulable"
-                    variant = "brand"
-                    iconName = "utility:clock"
-                    iconPosition = "left"
-                    onclick = "{!c.onSend}"
-                    disabled = "{!v.isCron}"/>
 </aura:component>
