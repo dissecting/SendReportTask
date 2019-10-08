@@ -42,7 +42,7 @@ public class ReportSenderSchController {
         Boolean isCron = reportSender[0].IsCron__c;
 
         if (isCron) {
-            throw new AuraHandledException('Schedulable job already exists!');
+            throw new AuraHandledException(Label.SchedulableAlreadyExists);
         }
 
         return isCron;

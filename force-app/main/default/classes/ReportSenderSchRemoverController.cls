@@ -50,7 +50,7 @@ public class ReportSenderSchRemoverController {
         Boolean isCron = reportSender[0].IsCron__c;
 
         if (!isCron) {
-            throw new AuraHandledException('Schedulable job does not exist!');
+            throw new AuraHandledException(Label.SchedulableDoesNotExist);
         }
 
         return isCron;
