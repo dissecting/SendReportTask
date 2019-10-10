@@ -306,7 +306,7 @@ public class ReportSenderController {
                 if (String.valueOf(reportFormat) == REPORT_FORMAT_MATRIX) {
                     resultsSerialize += detailColumnValueList[i] + ',';
                 } else {
-                    for (Integer j = 0 + colSizeIterator; j < columnSize + colSizeIterator; j++) {
+                    for (Integer j = colSizeIterator; j < columnSize + colSizeIterator; j++) {
                         resultsSerialize += detailColumnValueList[j] + ',';
                     }
                     colSizeIterator += columnSize;
@@ -317,7 +317,7 @@ public class ReportSenderController {
 
             if (String.valueOf(reportFormat) == REPORT_FORMAT_MATRIX) {
                 if (i >= detailColumnValueList.size()) {
-                    for (Integer j = 0 + colSizeIterator; j < columnSize + colSizeIterator; j++) {
+                    for (Integer j = colSizeIterator; j < columnSize + colSizeIterator; j++) {
                         resultsSerialize += detailColumnMatrixValueList[j] + ',';
                     }
                     colSizeIterator += columnSize;
