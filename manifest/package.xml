@@ -33,6 +33,10 @@
 		<name>CustomTab</name>
 	</types>
 	<types>
+		<members>ReportSender__c-ReportSender Layout</members>
+		<name>Layout</name>
+	</types>
+	<types>
 		<members>RemoveSchedulable</members>
 		<members>SendReportBySchedulable</members>
 		<members>SendReportNow</members>
