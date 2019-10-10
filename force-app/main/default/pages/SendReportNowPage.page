@@ -2,11 +2,13 @@
     <apex:includeLightning />
     <div id = "lightning" />
     <script>
-        var idRecord = '{!$CurrentPage.parameters.Id}';
         $Lightning.use("c:SendReportApp", function() {
             $Lightning.createComponent(
                 "c:SendReportNowChild",
-                { isVF: true, recordId: idRecord },
+                {
+                    isVF: true,
+                    recordId: "{! ReportSender__c.Id }"
+                },
                 "lightning"
           );
         });
