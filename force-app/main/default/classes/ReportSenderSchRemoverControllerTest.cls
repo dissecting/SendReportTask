@@ -1,30 +1,11 @@
 @isTest
 private class ReportSenderSchRemoverControllerTest {
 
-    @isTest
-    static void testCheckSchedulableStatus() {
-
-        ReportSender__c reportSender = new ReportSender__c (
-            Name = 'Three most popular skills',
-            Cron__c = '0 58 11 * * ? *',
-            IsCron__c = true,
-            Email__c = 'test@gmail.com'
-        );
-
-        insert reportSender;
-
-        Test.startTest();
-            Boolean isCron = ReportSenderSchRemoverController.checkCronStatus(reportSender.Id);
-        Test.stopTest();
-
-        System.assertEquals(true, isCron);
-    }
-
     @isTest(SeeAllData = 'true')
     static void testRemoveSchedulable() {
 
         ReportSender__c reportSender = new ReportSender__c (
-            Name = 'Three most popular skills',
+            Report_Name__c = 'Three most popular skills',
             Cron__c = '0 58 11 * * ? *',
             IsCron__c = false,
             Email__c = 'test@gmail.com'
@@ -57,7 +38,7 @@ private class ReportSenderSchRemoverControllerTest {
     static void testCheckIncorrectCronStatus() {
 
         ReportSender__c reportSender = new ReportSender__c (
-            Name = 'Three most popular skills',
+            Report_Name__c = 'Three most popular skills',
             Cron__c = '0 58 11 * * ? *',
             IsCron__c = false,
             Email__c = 'test@gmail.com'
@@ -67,7 +48,19 @@ private class ReportSenderSchRemoverControllerTest {
 
         Test.startTest();
             try {
-                ReportSenderSchRemoverController.checkCronStatus(reportSender.Id);
+                ReportSenderSchRemoverController.removeSchedulable(reportSender.Id);
+            } catch (AuraHandledException e) {
+                System.assertNotEquals(null, e.getMessage());
+            }
+        Test.stopTest();
+    }
+
+    @isTest
+    static void testSetNullRecordId() {
+
+        Test.startTest();
+            try {
+                ReportSenderSchRemoverController.removeSchedulable(null);
             } catch (AuraHandledException e) {
                 System.assertNotEquals(null, e.getMessage());
             }

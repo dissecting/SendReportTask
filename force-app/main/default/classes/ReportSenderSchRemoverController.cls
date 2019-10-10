@@ -4,29 +4,32 @@ public class ReportSenderSchRemoverController {
     public static void removeSchedulable(Id recordId) {
 
         List<ReportSender__c> reportSender = [
-            SELECT Id, Name, Cron__c
+            SELECT Id, Name, Cron__c, IsCron__c
             FROM ReportSender__c
             WHERE Id = :recordId
         ];
 
-        List<CronTrigger> jobList = [
-            SELECT Id, CronJobDetail.Name
-            FROM CronTrigger
-            WHERE CronJobDetail.Name = :reportSender[0].Name
-        ];
+        if (reportSender.isEmpty()) {
+            throw new AuraHandledException(Label.errMsgReportIsNotFound);
+        } else {
+            Boolean isCron = reportSender[0].IsCron__c;
 
-        for (CronTrigger job : jobList) {
-            System.abortJob(job.id);
+            if (!isCron) {
+                throw new AuraHandledException(Label.SchedulableDoesNotExist);
+            }
+
+            List<CronTrigger> jobList = [
+                SELECT Id, CronJobDetail.Name
+                FROM CronTrigger
+                WHERE CronJobDetail.Name = :reportSender[0].Name
+            ];
+
+            for (CronTrigger job : jobList) {
+                System.abortJob(job.id);
+            }
+
+            ReportSenderSchRemoverController.setCronStatus(reportSender);
         }
-
-        try {
-            setCronStatus(reportSender);
-        } catch (DMLException e){
-            throw new AuraHandledException(e.getDMLMessage(0));
-        } catch (Exception e){
-            throw new AuraHandledException(e.getMessage());
-        }
-
     }
 
     private static void setCronStatus(List<ReportSender__c> reportSenderList) {
@@ -36,23 +39,5 @@ public class ReportSenderSchRemoverController {
         }
 
         update reportSenderList;
-    }
-
-    @AuraEnabled
-    public static Boolean checkCronStatus(Id recordId) {
-
-        List<ReportSender__c> reportSender = [
-            SELECT Id, Name, Cron__c, IsCron__c
-            FROM ReportSender__c
-            WHERE Id = :recordId
-        ];
-
-        Boolean isCron = reportSender[0].IsCron__c;
-
-        if (!isCron) {
-            throw new AuraHandledException(Label.SchedulableDoesNotExist);
-        }
-
-        return isCron;
     }
 }

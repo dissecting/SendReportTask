@@ -1,3 +1,14 @@
 <aura:component extensible="true" implements="flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction" access="global">
-    {!v.body}
+    <aura:attribute name="isVF" type="Boolean" default="false"/>
+    <aura:attribute name="recordId" type="Id" default="{!v.recordId}"/>
+    <aura:attribute name="msg" type="String"/>
+    <aura:attribute name="isError" type="Boolean" default="false"/>
+    <lightning:spinner aura:id="mySpinner" class="slds-hide"/>
+    <aura:if isTrue="{!v.isVF}">
+        <div class="slds-col slds-small-size_12-of-12 slds-medium-size_6-of-12 slds-large-size_4-of-12 slds-align_absolute-center">
+            <ui:message title="{!(v.isError) ? 'Error' : 'Confirmation'}" severity="{!(v.isError) ? 'error' : 'confirm'}" closable="true">
+                {!v.msg}
+            </ui:message>
+        </div>
+    </aura:if>
 </aura:component>

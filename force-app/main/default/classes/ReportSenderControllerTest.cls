@@ -4,7 +4,7 @@ private class ReportSenderControllerTest {
     @isTest(SeeAllData = 'true')
     static void testSendSummaryReport() {
         ReportSender__c reportSender = new ReportSender__c (
-            Name = 'Three most popular skills',
+            Report_Name__c = 'Three most popular skills',
             Cron__c = '0 58 11 * * ? *',
             Email__c = 'test@gmail.com'
         );
@@ -14,7 +14,7 @@ private class ReportSenderControllerTest {
         List<Report> reportList = [
             SELECT Id, Name
             FROM Report
-            WHERE Name = :reportSender.Name
+            WHERE Name = :reportSender.Report_Name__c
         ];
 
         String reportId = (String)reportList.get(0).get('Id');
@@ -35,7 +35,7 @@ private class ReportSenderControllerTest {
     @isTest(SeeAllData = 'true')
     static void testSendTabularReport() {
         ReportSender__c reportSender = new ReportSender__c (
-            Name = 'EnglishSkill',
+            Report_Name__c = 'EnglishSkill',
             Cron__c = '0 58 11 * * ? *',
             Email__c = 'test@gmail.com'
         );
@@ -45,7 +45,7 @@ private class ReportSenderControllerTest {
         List<Report> reportList = [
             SELECT Id, Name
             FROM Report
-            WHERE Name = :reportSender.Name
+            WHERE Name = :reportSender.Report_Name__c
         ];
 
         String reportId = (String)reportList.get(0).get('Id');
@@ -66,7 +66,7 @@ private class ReportSenderControllerTest {
     @isTest(SeeAllData = 'true')
     static void testSendMatrixReport() {
         ReportSender__c reportSender = new ReportSender__c (
-            Name = 'AccountReportTest',
+            Report_Name__c = 'AccountReportTest',
             Cron__c = '0 58 11 * * ? *',
             Email__c = 'test@gmail.com'
         );
@@ -76,7 +76,7 @@ private class ReportSenderControllerTest {
         List<Report> reportList = [
             SELECT Id, Name
             FROM Report
-            WHERE Name = :reportSender.Name
+            WHERE Name = :reportSender.Report_Name__c
         ];
 
         String reportId = (String)reportList.get(0).get('Id');
@@ -97,7 +97,7 @@ private class ReportSenderControllerTest {
     @isTest
     static void testCheckNotExistReport() {
         ReportSender__c reportSender = new ReportSender__c (
-            Name = 'Test',
+            Report_Name__c = 'Test',
             Cron__c = '0 58 11 * * ? *',
             Email__c = 'test@gmail.com'
         );
@@ -107,6 +107,19 @@ private class ReportSenderControllerTest {
         Test.startTest();
             try {
                 ReportSenderController.getReport(reportSender.Id);
+            } catch (AuraHandledException e) {
+                System.assertNotEquals(null, e.getMessage());
+            }
+        Test.stopTest();
+
+    }
+
+    @isTest
+    static void testIncorrectIdReport() {
+
+        Test.startTest();
+            try {
+                ReportSenderController.getReport(null);
             } catch (AuraHandledException e) {
                 System.assertNotEquals(null, e.getMessage());
             }

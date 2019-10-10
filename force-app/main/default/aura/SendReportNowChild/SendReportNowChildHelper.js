@@ -16,34 +16,38 @@
             var state = response.getState();
             if (state === "SUCCESS") {
                 if (!isVF) {
-                    component.find("notifLib").showToast({
-                        "variant": "success",
-                        "header": "Success!",
+                    var toastEvent = $A.get("e.force:showToast");
+                    toastEvent.setParams({
+                        "title": "Success!",
+                        "type": "success",
                         "message": "Email successfully sended!"
                     });
+                    toastEvent.fire();
                 } else {
-                    component.set("v.isConfirm", true);
                     component.set("v.isError", false);
                     component.set("v.msg", "Email successfully sended!");
                 }
             } else if (state === "ERROR") {
                 var errors = response.getError();
                 if (!isVF) {
-                    component.find("notifLib").showToast({
-                        "variant": "error",
-                        "header": "Error!",
+                    var toastEvent = $A.get("e.force:showToast");
+                    toastEvent.setParams({
+                        "title": "Error!",
+                        "type": "error",
                         "message": errors[0].message
                     });
+                    toastEvent.fire();
                 } else {
-                    component.set("v.isConfirm", false);
                     component.set("v.isError", true);
                     component.set("v.msg", errors[0].message);
                 }
                 console.error(errors);
             }
-            this.handleStopLoading(component);
-            var dismissActionPanel = $A.get("e.force:closeQuickAction");
-            dismissActionPanel.fire();
+            if (!isVF) {
+                this.handleStopLoading(component);
+                var dismissActionPanel = $A.get("e.force:closeQuickAction");
+                dismissActionPanel.fire();
+            }
         });
         $A.enqueueAction(action);
     }

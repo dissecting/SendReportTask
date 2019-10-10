@@ -1,42 +1,14 @@
 ({
     handleInit : function(component, recordId) {
-        var action = component.get("c.checkSchedulableStatus");
         var isVF = component.get("v.isVF");
-        action.setParams({
-            recordId: recordId
-        });
         if (!isVF) {
             this.handleStartLoading(component);
         }
-        action.setCallback(this, function(response) {
-            var state = response.getState();
-            if (state === "SUCCESS") {
-                this.handleAction(component, recordId);
-            } else if (state === "ERROR") {
-                var errors = response.getError();
-                if (!isVF) {
-                    component.find("notifLib").showToast({
-                        "variant": "error",
-                        "header": "Error!",
-                        "message": errors[0].message
-                    });
-                    this.handleStopLoading(component);
-                    var dismissActionPanel = $A.get("e.force:closeQuickAction");
-                    dismissActionPanel.fire();
-                } else {
-                    component.set("v.isConfirm", false);
-                    component.set("v.isError", true);
-                    component.set("v.msg", errors[0].message);
-                }
-                console.error(errors);
-            }
-        });
-        $A.enqueueAction(action);
+        this.handleAction(component, recordId, isVF);
     },
 
-    handleAction: function(component, recordId) {
+    handleAction: function(component, recordId, isVF) {
         var action = component.get("c.setSchedulable");
-        var isVF = component.get("v.isVF");
         action.setParams({
             recordId: recordId
         });
@@ -44,26 +16,28 @@
             var state = response.getState();
             if (state === "SUCCESS") {
                 if (!isVF) {
-                    component.find("notifLib").showToast({
-                        "variant": "success",
-                        "header": "Success!",
+                    var toastEvent = $A.get("e.force:showToast");
+                    toastEvent.setParams({
+                        "title": "Success!",
+                        "type": "success",
                         "message": "Successfully Scheduled Email!"
                     });
+                    toastEvent.fire();
                 } else {
-                    component.set("v.isConfirm", true);
                     component.set("v.isError", false);
                     component.set("v.msg", "Successfully Scheduled Email!");
                 }
             } else if (state === "ERROR") {
                 var errors = response.getError();
                 if (!isVF) {
-                    component.find("notifLib").showToast({
-                        "variant": "error",
-                        "header": "Error!",
+                    var toastEvent = $A.get("e.force:showToast");
+                    toastEvent.setParams({
+                        "title": "Error!",
+                        "type": "error",
                         "message": errors[0].message
                     });
+                    toastEvent.fire();
                 } else {
-                    component.set("v.isConfirm", false);
                     component.set("v.isError", true);
                     component.set("v.msg", errors[0].message);
                 }

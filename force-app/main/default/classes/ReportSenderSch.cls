@@ -7,7 +7,7 @@ global class ReportSenderSch implements Schedulable {
     }
 
     global void execute(SchedulableContext sc) {
-        ReportSenderController.getReport(reportId);
+        ReportSenderController.getDataReport(reportId);
     }
 
 }

@@ -1,119 +1,131 @@
 public class ReportSenderController {
 
+    private static final String REPORT_FORMAT_TABULAR = 'TABULAR';
+    private static final String REPORT_FORMAT_SUMMARY = 'SUMMARY';
+    private static final String REPORT_FORMAT_MATRIX = 'MATRIX';
+
     @AuraEnabled
     public static void getReport(Id recordId) {
+        ReportSenderController.getDataReport(recordId);
+    }
 
+    public static void getDataReport(Id recordId) {
         List<ReportSender__c> reportSender = [
-            SELECT Id, Name, Email__c
+            SELECT Id, Name, Email__c, Report_Name__c
             FROM ReportSender__c
             WHERE Id = :recordId
         ];
-        List<Report> reportList = [
-            SELECT Id, Name
-            FROM Report
-            WHERE Name = :reportSender[0].Name
-        ];
 
-        if (!reportList.isEmpty()) {
-
-            ReportAttributes reportAttributes = new ReportAttributes();
-
-            String reportId = (String)reportList.get(0).get('Id');
-            String emailName = reportSender[0].Email__c;
-            String reportName = reportSender[0].Name;
-
-            Reports.reportResults results = Reports.ReportManager.runReport(reportId, true);
-            Reports.Dimension dimension = results.getGroupingsDown();
-            Reports.Dimension dimensionAcross = results.getGroupingsAcross();
-            Reports.ReportExtendedMetadata reportExtendedMetadata  = results.getReportExtendedMetadata();
-            Reports.ReportMetadata reportMetadata = results.getReportMetadata();
-            Reports.ReportFormat reportFormat = reportMetadata.getReportFormat();
-
-            Map<String,Reports.AggregateColumn> aggregateColumnMap = reportExtendedMetadata.getAggregateColumnInfo();
-            Map<String,Reports.GroupingColumn> groupingColumnMap = reportExtendedMetadata.getGroupingColumnInfo();
-            Map<String,Reports.DetailColumn> detailColumnInfoMap = reportExtendedMetadata.getDetailColumnInfo();
-
-            List<Reports.GroupingValue> groupingValueList = dimension.getGroupings();
-            List<String> aggregateColumnList = new List<String>();
-            List<String> groupingColumnList = new List<String>();
-            List<String> detailColumnList = new List<String>();
-            List<String> factMapKey = new List<String>();
-            List<String> groupingValueLabelList = new List<String>();
-            List<String> summaryValueList = new List<String>();
-            List<String> detailColumnValueList = new List<String>();
-            List<String> detailColumnMatrixValueList = new List<String>();
-
-            Integer columnSize = 0;
-            Integer recordListSize = 0;
-
-            for (String key : aggregateColumnMap.keySet()) {
-                aggregateColumnList.add(aggregateColumnMap.get(key).getLabel());
-            }
-
-            for (String key : groupingColumnMap.keySet()) {
-                groupingColumnList.add(groupingColumnMap.get(key).getLabel());
-            }
-
-            for (String key : detailColumnInfoMap.keySet()) {
-                detailColumnList.add(detailColumnInfoMap.get(key).getLabel());
-            }
-
-            for (Reports.GroupingValue groupingValue : groupingValueList) {
-                factMapKey.add(groupingValue.getKey());
-            }
-
-            if (String.valueOf(reportFormat) == 'SUMMARY') {
-                reportAttributes = getSummaryReport(
-                    results,
-                    columnSize,
-                    summaryValueList,
-                    detailColumnValueList,
-                    groupingValueLabelList,
-                    factMapKey,
-                    dimension
-                );
-            } else if (String.valueOf(reportFormat) == 'TABULAR') {
-                reportAttributes = getTabularReport(
-                    results,
-                    columnSize,
-                    summaryValueList,
-                    detailColumnValueList
-                );
-            } else if (String.valueOf(reportFormat) == 'MATRIX') {
-                String aggregateValue = aggregateColumnList[0];
-                groupingValueList.addAll(dimensionAcross.getGroupings());
-                aggregateColumnList[0] = groupingValueList[groupingValueList.size() - 1].getLabel();
-                reportAttributes = getMatrixReport(
-                    results,
-                    columnSize,
-                    summaryValueList,
-                    detailColumnValueList,
-                    groupingValueLabelList,
-                    factMapKey,
-                    recordListSize,
-                    aggregateValue,
-                    groupingValueList,
-                    detailColumnMatrixValueList,
-                    groupingColumnList
-                );
-            }
-
-            String dataReport = prepareDataReport(
-                reportAttributes.columnSize,
-                reportAttributes.summaryValueList,
-                reportAttributes.detailColumnValueList,
-                reportAttributes.groupingValueLabelList,
-                reportAttributes.recordListSize,
-                aggregateColumnList,
-                groupingColumnList,
-                detailColumnList,
-                detailColumnMatrixValueList,
-                reportFormat
-            );
-
-            sendReportEmail(dataReport, emailName, reportName);
-        } else {
+        if (reportSender.isEmpty()) {
             throw new AuraHandledException(Label.errMsgReportIsNotFound);
+        } else {
+            List<Report> reportList = [
+                SELECT Id, Name
+                FROM Report
+                WHERE Name = :reportSender[0].Report_Name__c
+            ];
+
+            if (!reportList.isEmpty()) {
+
+                ReportAttributes reportAttributes = new ReportAttributes();
+
+                String reportId = (String)reportList.get(0).get('Id');
+                String emailName = reportSender[0].Email__c;
+                String reportName = reportSender[0].Report_Name__c;
+
+                Reports.reportResults results = Reports.ReportManager.runReport(reportId, true);
+                Reports.Dimension dimension = results.getGroupingsDown();
+                Reports.Dimension dimensionAcross = results.getGroupingsAcross();
+                Reports.ReportExtendedMetadata reportExtendedMetadata  = results.getReportExtendedMetadata();
+                Reports.ReportMetadata reportMetadata = results.getReportMetadata();
+                Reports.ReportFormat reportFormat = reportMetadata.getReportFormat();
+
+                Map<String,Reports.AggregateColumn> aggregateColumnMap = reportExtendedMetadata.getAggregateColumnInfo();
+                Map<String,Reports.GroupingColumn> groupingColumnMap = reportExtendedMetadata.getGroupingColumnInfo();
+                Map<String,Reports.DetailColumn> detailColumnInfoMap = reportExtendedMetadata.getDetailColumnInfo();
+
+                List<Reports.GroupingValue> groupingValueList = dimension.getGroupings();
+                List<String> aggregateColumnList = new List<String>();
+                List<String> groupingColumnList = new List<String>();
+                List<String> detailColumnList = new List<String>();
+                List<String> factMapKey = new List<String>();
+                List<String> groupingValueLabelList = new List<String>();
+                List<String> summaryValueList = new List<String>();
+                List<String> detailColumnValueList = new List<String>();
+                List<String> detailColumnMatrixValueList = new List<String>();
+
+                Integer columnSize = 0;
+                Integer recordListSize = 0;
+
+                for (String key : aggregateColumnMap.keySet()) {
+                    aggregateColumnList.add(aggregateColumnMap.get(key).getLabel());
+                }
+
+                for (String key : groupingColumnMap.keySet()) {
+                    groupingColumnList.add(groupingColumnMap.get(key).getLabel());
+                }
+
+                for (String key : detailColumnInfoMap.keySet()) {
+                    detailColumnList.add(detailColumnInfoMap.get(key).getLabel());
+                }
+
+                for (Reports.GroupingValue groupingValue : groupingValueList) {
+                    factMapKey.add(groupingValue.getKey());
+                }
+
+                if (String.valueOf(reportFormat) == REPORT_FORMAT_SUMMARY) {
+                    reportAttributes = ReportSenderController.getSummaryReport(
+                        results,
+                        columnSize,
+                        summaryValueList,
+                        detailColumnValueList,
+                        groupingValueLabelList,
+                        factMapKey,
+                        dimension
+                    );
+                } else if (String.valueOf(reportFormat) == REPORT_FORMAT_TABULAR) {
+                    reportAttributes = ReportSenderController.getTabularReport(
+                        results,
+                        columnSize,
+                        summaryValueList,
+                        detailColumnValueList
+                    );
+                } else if (String.valueOf(reportFormat) == REPORT_FORMAT_MATRIX) {
+                    String aggregateValue = aggregateColumnList[0];
+                    groupingValueList.addAll(dimensionAcross.getGroupings());
+                    aggregateColumnList[0] = groupingValueList[groupingValueList.size() - 1].getLabel();
+                    reportAttributes = ReportSenderController.getMatrixReport(
+                        results,
+                        columnSize,
+                        summaryValueList,
+                        detailColumnValueList,
+                        groupingValueLabelList,
+                        factMapKey,
+                        recordListSize,
+                        aggregateValue,
+                        groupingValueList,
+                        detailColumnMatrixValueList,
+                        groupingColumnList
+                    );
+                }
+
+                String dataReport = ReportSenderController.prepareDataReport(
+                    reportAttributes.columnSize,
+                    reportAttributes.summaryValueList,
+                    reportAttributes.detailColumnValueList,
+                    reportAttributes.groupingValueLabelList,
+                    reportAttributes.recordListSize,
+                    aggregateColumnList,
+                    groupingColumnList,
+                    detailColumnList,
+                    detailColumnMatrixValueList,
+                    reportFormat
+                );
+
+                ReportSenderController.sendReportEmail(dataReport, emailName, reportName);
+            } else {
+                throw new AuraHandledException(Label.errMsgReportIsNotFound);
+            }
         }
     }
 
@@ -250,13 +262,16 @@ public class ReportSenderController {
         String resultsSerialize = '';
         Integer colSizeIterator = 0;
         Integer matrixListSize = recordListSize;
-        Integer recordsSize = groupingValueLabelList.size() > summaryValueList.size() ? groupingValueLabelList.size() : summaryValueList.size();
-        Integer columnListSize = groupingColumnList.size() > aggregateColumnList.size() ? groupingColumnList.size() : aggregateColumnList.size();
+        Integer recordsSize = groupingValueLabelList.size() > summaryValueList.size() ?
+            groupingValueLabelList.size() : summaryValueList.size();
+        Integer columnListSize = groupingColumnList.size() > aggregateColumnList.size() ?
+            groupingColumnList.size() : aggregateColumnList.size();
 
         recordListSize = recordListSize > recordsSize ? recordListSize : recordsSize;
 
         if (columnSize > 0) {
-            recordListSize = recordListSize > detailColumnValueList.size() / columnSize ? recordListSize : detailColumnValueList.size() / columnSize;
+            recordListSize = recordListSize > detailColumnValueList.size() / columnSize ?
+                recordListSize : detailColumnValueList.size() / columnSize;
         }
 
         for (Integer i = 0; i < columnListSize; i++) {
@@ -288,7 +303,7 @@ public class ReportSenderController {
             }
 
             if (i < detailColumnValueList.size()) {
-                if (String.valueOf(reportFormat) == 'MATRIX') {
+                if (String.valueOf(reportFormat) == REPORT_FORMAT_MATRIX) {
                     resultsSerialize += detailColumnValueList[i] + ',';
                 } else {
                     for (Integer j = 0 + colSizeIterator; j < columnSize + colSizeIterator; j++) {
@@ -300,7 +315,7 @@ public class ReportSenderController {
                 resultsSerialize += ',';
             }
 
-            if (String.valueOf(reportFormat) == 'MATRIX') {
+            if (String.valueOf(reportFormat) == REPORT_FORMAT_MATRIX) {
                 if (i >= detailColumnValueList.size()) {
                     for (Integer j = 0 + colSizeIterator; j < columnSize + colSizeIterator; j++) {
                         resultsSerialize += detailColumnMatrixValueList[j] + ',';
@@ -344,10 +359,10 @@ public class ReportSenderController {
         public Integer recordListSize { get; set; }
 
         public ReportAttributes() {
-            summaryValueList = new List<String>();
-            detailColumnValueList = new List<String>();
-            groupingValueLabelList = new List<String>();
-            detailColumnMatrixValueList = new List<String>();
+            this.summaryValueList = new List<String>();
+            this.detailColumnValueList = new List<String>();
+            this.groupingValueLabelList = new List<String>();
+            this.detailColumnMatrixValueList = new List<String>();
         }
     }
 }

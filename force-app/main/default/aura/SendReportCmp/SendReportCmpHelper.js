@@ -1,5 +1,5 @@
 ({
-    handleAction: function(component, recordId) {
+    handleAction: function() {
 
     },
 

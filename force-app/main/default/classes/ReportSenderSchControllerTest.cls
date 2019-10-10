@@ -1,30 +1,11 @@
 @isTest
 private class ReportSenderSchControllerTest {
 
-    @isTest
-    static void testCheckSchedulableStatus() {
-
-        ReportSender__c reportSender = new ReportSender__c (
-            Name = 'Three most popular skills',
-            Cron__c = '0 58 11 * * ? *',
-            IsCron__c = false,
-            Email__c = 'test@gmail.com'
-        );
-
-        insert reportSender;
-
-        Test.startTest();
-            Boolean isCron = ReportSenderSchController.checkSchedulableStatus(reportSender.Id);
-        Test.stopTest();
-
-        System.assertEquals(false, isCron);
-    }
-
     @isTest(SeeAllData = 'true')
     static void testSetSchedulable() {
 
         ReportSender__c reportSender = new ReportSender__c (
-            Name = 'Three most popular skills',
+            Report_Name__c = 'Three most popular skills',
             Cron__c = '0 58 11 * * ? *',
             IsCron__c = false,
             Email__c = 'test@gmail.com'
@@ -54,7 +35,7 @@ private class ReportSenderSchControllerTest {
     @isTest
     static void testSetIncorrectSchedulable() {
         ReportSender__c reportSender = new ReportSender__c (
-            Name = 'Test',
+            Report_Name__c = 'Test',
             Cron__c = 'Test',
             Email__c = 'test@gmail.com'
         );
@@ -75,7 +56,7 @@ private class ReportSenderSchControllerTest {
     static void testCheckIncorrectSchedulableStatus() {
 
         ReportSender__c reportSender = new ReportSender__c (
-            Name = 'Three most popular skills',
+            Report_Name__c = 'Three most popular skills',
             Cron__c = '0 58 11 * * ? *',
             IsCron__c = true,
             Email__c = 'test@gmail.com'
@@ -85,7 +66,19 @@ private class ReportSenderSchControllerTest {
 
         Test.startTest();
             try {
-                ReportSenderSchController.checkSchedulableStatus(reportSender.Id);
+                ReportSenderSchController.setSchedulable(reportSender.Id);
+            } catch (AuraHandledException e) {
+                System.assertNotEquals(null, e.getMessage());
+            }
+        Test.stopTest();
+    }
+
+    @isTest
+    static void testSetNullRecordId() {
+
+        Test.startTest();
+            try {
+                ReportSenderSchController.setSchedulable(null);
             } catch (AuraHandledException e) {
                 System.assertNotEquals(null, e.getMessage());
             }
